@@ -6,7 +6,7 @@ const sequelize = require('./config/connection');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// const {Organization, User, Incident} = require('./models');
+const {Organization, User, Incident} = require('./models');
 
 // Express middleware
 app.use(express.urlencoded({ extended:true }));

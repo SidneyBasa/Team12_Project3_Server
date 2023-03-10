@@ -22,12 +22,16 @@ Incident.init(
       unique: true,
     },
     personofinterest: {
-      type: DataTypes.STRING,
-      references: {
-        model: 'user',
-        key: 'id',
-      }
-    },
+      type: DataTypes.STRING
+    }
+    // ,
+    // UserId: {
+    //   type: DataTypes.STRING,
+    //   references: {
+    //     model: 'user',
+    //     key: 'id',
+    //   }
+    // }
   },
   {
     sequelize,

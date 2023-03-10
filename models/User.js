@@ -15,22 +15,22 @@ User.init({
        allowNull:false
     },
     password: {
-        type: DatTypes.STRING,
+        type: DataTypes.STRING,
     },
     isAuth: {
         type: DataTypes.BOOLEAN
     },
     isAdmin: {
         type: DataTypes.BOOLEAN
-    },
-    organizationalId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'organization',
-            key: 'id',
-        }
     }
-
+    // ,
+    // organizationalId: {
+    //     type: DataTypes.INTEGER,
+    //     references: {
+    //         model: 'organization',
+    //         key: 'id',
+    //     }
+    // }
 }, {
     sequelize,
     modelName: 'user',

@@ -10,8 +10,13 @@ User.belongsTo(Organization, {
 })
 
 User.hasMany(Incident, {
-    foreignKey: 'userID',
+    foreignKey: 'UserID',
     onDelete: 'CASCADE',
 })
 
-Incident.belongsTo(User)
+Incident.belongsTo(User, {
+    foreignKey: 'UserID',
+    onDelete: 'CASCADE',
+})
+
+module.exports = { User, Organization, Incident };
