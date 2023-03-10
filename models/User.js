@@ -33,7 +33,13 @@ User.init({
 
 }, {
     sequelize,
-    modelName: 'user'
+    modelName: 'user',
+    hooks: {
+        beforeCreate:userObject=>{
+            userObject.password = bcrypt.hashSync(userObject.password, 5);
+            return userObject
+        }
+    }
 })
 
 module.exports=User
