@@ -1,6 +1,7 @@
 const express = require('express');
 // const allRoutes = require('./controllers');
 const sequelize = require('./config/connection');
+const everyRoute = require('./controllers');
 
 // Invokes the express application to the app variable
 const app = express();
@@ -12,6 +13,8 @@ const {Organization, User, Incident} = require('./models');
 app.use(express.urlencoded({ extended:true }));
 // ahhhhh!          V
 app.use(express.json());
+
+app.use(everyRoute);
 
 // app.use('/', allRoutes);
 app.get("/", (request, response)=> {

@@ -8,21 +8,26 @@ Incident.init(
     description: {
       type: DataTypes.STRING,
       allowNull: false,
+      defaultValue: 'incident'
     },
     locationX: {
         type: DataTypes.FLOAT,
         allowNull: false,
+        defaultValue: 122.321245
     },
     locationY: {
         type: DataTypes.FLOAT,
         allowNull: false,
+        defaultValue: 47.608780
     },
     notes: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: false,
+      defaultValue: 'notable'
     },
     personofinterest: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      defaultValue: 'person'
     }
     // ,
     // UserId: {
