@@ -1,5 +1,5 @@
 const User = require('./User');
-const Organization = require('./Incident.js');
+const Organization = require('./Organization');
 const Incident = require('./Incident');
 
 Organization.hasMany(User);

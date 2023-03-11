@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
+const sequelize = require('../config/connection.js');
 
 class Organization extends Model {}
 
@@ -9,14 +9,6 @@ Organization.init({
        unique:true,
        allowNull:false
     }
-    // ,
-    // UserId: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: 'user',
-    //         key: 'id',
-    //     }
-    // }
 }, {
     sequelize,
     modelName: 'organization'

@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
+const sequelize = require('../config/connection.js');
 
 class User extends Model {}
 
@@ -23,14 +23,6 @@ User.init({
     isAdmin: {
         type: DataTypes.BOOLEAN
     }
-    // ,
-    // organizationalId: {
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: 'organization',
-    //         key: 'id',
-    //     }
-    // }
 }, {
     sequelize,
     modelName: 'user',

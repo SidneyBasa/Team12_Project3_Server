@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/connection');
+const sequelize = require('../config/connection.js');
 
 class Incident extends Model {}
 
@@ -29,14 +29,6 @@ Incident.init(
       type: DataTypes.STRING,
       defaultValue: 'person'
     }
-    // ,
-    // UserId: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: 'user',
-    //     key: 'id',
-    //   }
-    // }
   },
   {
     sequelize,
