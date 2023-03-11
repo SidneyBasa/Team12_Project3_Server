@@ -22,7 +22,21 @@ User.init({
     },
     isAdmin: {
         type: DataTypes.BOOLEAN
+    },
+    organizationId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
+
+    // ,
+    // organizationId: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    //     references: {
+    //         model: 'organization',
+    //         key: 'id',
+    //     }
+    // }
 }, {
     sequelize,
     modelName: 'user',

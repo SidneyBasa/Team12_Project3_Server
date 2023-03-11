@@ -2,21 +2,27 @@ const User = require('./User');
 const Organization = require('./Organization');
 const Incident = require('./Incident');
 
-Organization.hasMany(User);
 
 User.belongsTo(Organization, {
-    foreignKey: 'organizationalId',
+    foreignKey: {
+        allowNull: 'false',
+    },
     onDelete: 'CASCADE',
-})
+}
+)
 
-User.hasMany(Incident, {
-    foreignKey: 'UserID',
-    onDelete: 'CASCADE',
-})
+Organization.hasMany(User);
 
-Incident.belongsTo(User, {
-    foreignKey: 'UserID',
+Incident.belongsTo(User, 
+    {
+    foreignKey: {
+        allowNull: 'false',
+    },
     onDelete: 'CASCADE',
-})
+}
+)
+
+User.hasMany(Incident)
 
 module.exports = { User, Organization, Incident };
+

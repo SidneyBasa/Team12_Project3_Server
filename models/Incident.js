@@ -8,7 +8,7 @@ Incident.init(
     description: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'incident'
+      defaultValue: 'incident',
     },
     locationX: {
         type: DataTypes.FLOAT,
@@ -28,6 +28,14 @@ Incident.init(
     personofinterest: {
       type: DataTypes.STRING,
       defaultValue: 'person'
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false, 
+        // references: {
+        //   model: 'user',
+        //   key: 'id'
+        // }
     }
   },
   {
