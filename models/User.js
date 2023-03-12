@@ -16,6 +16,7 @@ User.init({
     },
     password: {
         type: DataTypes.STRING,
+        allowNull: false
     },
     isAuth: {
         type: DataTypes.BOOLEAN
@@ -41,10 +42,17 @@ User.init({
     sequelize,
     modelName: 'user',
     hooks: {
-        beforeCreate:userObject=>{
-            userObject.password = bcrypt.hashSync(userObject.password, 5);
-            return userObject
-        }
+        // Before the password is submitted encrypt with bcrypt method hash 
+        beforeCreate: async (userObject) => {
+            userObject.password = await bcrypt.hash(userObject.password, 5);
+            return userObject;
+        },
+        // Makes sure the password is encrypted before updating the database
+        beforeUpdate: async (updatedUserData) => {
+        updatedUserData.password = await bcrypt.hash(updatedUserData.password, 5);
+        return updatedUserData;
+        },
+
     }
 })
 
