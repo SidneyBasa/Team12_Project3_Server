@@ -84,18 +84,18 @@ router.post("/login", (request, response)=>{
    
     User.findOne({
         where:{
-            username:request.body.username
+            name:request.body.name
         }
     }
     // console.log("Test at username", username)
     )
     // check of if User object was found
-    .then(userFound=>{
-        if(!userFound){
+    .then(foundUser=>{
+        if(!foundUser){
             console.log("Test at line 65 at login route in UserController")
             // if the User obhect was not found return an unauthrized status of 401
             return response.status(401).json({msg:"User was not found"})
-        } else if (!bcrypt.compareSync(request.body.password, userFound.password)) { 
+        } else if (!bcrypt.compareSync(request.body.password, foundUser.password)) { 
             // Unencrypt the data, then check if the password matches the stored password
         } else {
             // new json webtoken method sign
@@ -110,7 +110,7 @@ router.post("/login", (request, response)=>{
                 expiresIn:"2h"
             })
             console.log(token)
-            return res.json({
+            return response.json({
                 token:token,
                 user:foundUser
             })
