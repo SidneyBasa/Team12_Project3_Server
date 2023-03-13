@@ -109,11 +109,14 @@ router.post("/login", (request, response)=>{
             },process.env.JWT_SECRET,{
                 expiresIn:"2h"
             })
-            console.log(token)
+            console.log("\x1B[33m======================================================================================================================================================================")
+            console.log("\x1B[36m value of json web token:", token);
+            console.log("\x1B[33m======================================================================================================================================================================\x1b[0m")
             return response.json({
                 token:token,
                 user:foundUser
             })
+            
         }
     })
     .catch(error=>{
