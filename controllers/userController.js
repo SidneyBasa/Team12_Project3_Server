@@ -13,22 +13,12 @@ router.get("/", (request, response)=>{
     })
 })
 
-// logout route
-router.get("/logout", (request, response)=>{
-
-    // Deleting the log in data from the cookie
-    // request.session.destroy();
-
-    // TODO review json web tokens
-
-    response.send("The user has logged out")
-})
 
 // get one user
 router.get("/:id", (request, response)=>{
 
     User.findByPk(request.params.id, {
-        include:[Blog]
+        include:[Incident]
     })
     .then(userdata=>{
         response.json(userdata)
@@ -36,7 +26,7 @@ router.get("/:id", (request, response)=>{
     .catch(error=>{
         console.log(error);
         response.status(500)
-        .json({msg:"error getting user and blog posts!", error})
+        .json({msg:"error getting user and incident reports!", error})
     })
 })
 
@@ -77,23 +67,25 @@ router.post("/login", (request, response)=>{
             console.log("Test at line 65 at login route in UserController")
             // if the User obhect was not found return an unauthrized status of 401
             return response.status(401).json({msg:"User was not found"})
-        } else {
-            console.log("Test at line 69 at login route in UserController")
+        } else if (!bcrypt.compareSync(request.body.password, userFound.password)) { 
             // Unencrypt the data, then check if the password matches the stored password
-            if(bcrypt.compareSync(request.body.password, userFound.password)){
-                // tells sessions that you have logged in
-                // request.session.UserId = userFound.id;
-
-                // TODO research json web tokens
-
-                // adds the property username to the session data
-                // request.session.username = userFound.username;
-
-                // if the password matches, return with the userFound object data
-                return response.json(userFound)
-            } else {
-                return response.status(401).json({msg:"incorrect password"})
-            }
+        } else {
+            // new json webtoken method sign
+            // sign method uses three arguments
+            // 1. payload
+            // 2. JWT Secret string
+            // 3. option for 2 hour expiration
+            const token = jwt.sign({
+                id:foundUser.id,
+                username:foundUser.username
+            },process.env.JWT_SECRET,{
+                expiresIn:"2h"
+            })
+            console.log(token)
+            return res.json({
+                token:token,
+                user:foundUser
+            })
         }
     })
     .catch(error=>{
@@ -104,5 +96,17 @@ router.post("/login", (request, response)=>{
         .json({msg:"Error at login!", error})
     })
 })
+
+// logout route
+router.get("/logout", (request, response)=>{
+
+    // Deleting the log in data from the cookie
+    // request.session.destroy();
+
+    // TODO review json web tokens
+
+    response.send("The user has logged out")
+})
+
 
 module.exports = router;
