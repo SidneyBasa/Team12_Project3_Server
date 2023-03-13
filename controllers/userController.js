@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {User, Organization, Incident } = require('../models');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 
 // find all users
 router.get("/", (request, response)=>{
@@ -31,6 +32,7 @@ router.get("/:id", (request, response)=>{
 })
 
 // post route to create a user
+// post route http://localhost:3001/users
 router.post("/", (request, response)=>{
     
     User.create({
@@ -38,20 +40,46 @@ router.post("/", (request, response)=>{
         displayName:request.body.displayName,
         password:request.body.password,
         isAuth:request.body.isAuth,
-        isAdmin:request.body.isAdmin
+        isAdmin:request.body.isAdmin,
+        organizationId:request.body.organizationId
 
     })
     .then(userdata=>{
         response.json(userdata)
     })
     .catch(error=>{
-        console.log("error:", error.errors[0].message);
+        console.log("error:", error);
         response.status(500)
         .json({msg: "Error when creating this user name", error})
     })
 })
 
+// dashboard route
+// get route http://localhost:3001/users/dashboard
+router.get("/dashboard",(request,response)=>{
+    //TODO: get userdata from jwt, verify jwt
+    const token = request.headers?.authorization?.split(" ")[1]
+    console.log(request.headers)
+    console.log(token)
+    if(!token){
+        return response.status(403).json({msg:"invalid or missing token"})
+    }
+    try {
+        const data = jwt.verify(token,process.env.JWT_SECRET)
+        console.log(data);
+        User.findByPk(data.id).then(foundUser=>{
+
+            return response.json(foundUser)
+        })
+    } catch (err) {
+        console.log(err);
+        return response.status(403).json({msg:"invalid or missing token"})
+    }
+})
+
+
 // login route
+// post route http://localhost:3001/users/login
 router.post("/login", (request, response)=>{
    
     User.findOne({
@@ -98,6 +126,7 @@ router.post("/login", (request, response)=>{
 })
 
 // logout route
+// get request http://localhost:3001/users/logout
 router.get("/logout", (request, response)=>{
 
     // Deleting the log in data from the cookie

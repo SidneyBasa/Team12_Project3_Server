@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const {User, Organization, Incident } = require('../models');
+const bcrypt = require("bcrypt");
 
 // get all incidents
 // include user
