@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken")
 
 // find all users
 router.get("/", (request, response)=>{
+    console.log('got here');
     User.findAll().then(usageData=>{
         response.json(usageData)
     }).catch(error=>{
@@ -34,7 +35,6 @@ router.get("/:id", (request, response)=>{
 // post route to create a user
 // post route http://localhost:3001/users
 router.post("/", (request, response)=>{
-    
     User.create({
         name:request.body.name,
         displayName:request.body.displayName,

@@ -3,8 +3,8 @@ const { Incident } = require('../models');
 const incidentData = [
   {
     description: 'vending machine theft',
-    locationX: 122.321245,
-    locationY: 47.608780,
+    locationX: 122.371245,
+    locationY: 47.408780,
     notes: "The vending machine plexiglass was broken into, all snacks missing.",
     personofInterest:"A male or female height of 5'2' wearing dark sunglasses and hoodie",
     userId: 1
@@ -19,8 +19,8 @@ const incidentData = [
   },
   {
     description: 'car break in',
-    locationX: 122.321245,
-    locationY: 47.608780,
+    locationX: 122.281245,
+    locationY: 47.708780,
     notes: "An ambulance was broken into",
     personofInterest:"A male with a height of 5'10' wearing a hoodie and ski mask",
     userId: 2

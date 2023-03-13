@@ -5,7 +5,7 @@ const {User, Organization, Incident } = require('../models');
 // include associated incidents
 router.get('/', (request, response) => {
   Organization.findAll({
-    include:[ Incident ]
+    include:[ User ]
   }).then(organizationdata=>{
     response.json(organizationdata)
 }).catch(error=>{
