@@ -12,6 +12,6 @@ const organizationData = [
   },
 ];
 
-const seedOrgnizations = () => Organization.bulkCreate(organizationData);
+const seedOrgnizations = () => Organization.bulkCreate(organizationData,{individualHooks:true});
 
 module.exports = seedOrgnizations;

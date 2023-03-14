@@ -3,10 +3,10 @@ const router = express.Router();
 const {User, Organization, Incident } = require('../models');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
+const { IsUser, IsAuth, IsAdmin } = require("./ValidateUser");
 
 // find all users
 router.get("/", (request, response)=>{
-    console.log('got here');
     User.findAll().then(usageData=>{
         response.json(usageData)
     }).catch(error=>{
@@ -34,24 +34,128 @@ router.get("/:id", (request, response)=>{
 
 // post route to create a user
 // post route http://localhost:3001/users
-router.post("/", (request, response)=>{
-    User.create({
-        name:request.body.name,
-        displayName:request.body.displayName,
-        password:request.body.password,
-        isAuth:request.body.isAuth,
-        isAdmin:request.body.isAdmin,
-        organizationId:request.body.organizationId
-
-    })
-    .then(userdata=>{
-        response.json(userdata)
-    })
-    .catch(error=>{
-        console.log("error:", error);
-        response.status(500)
-        .json({msg: "Error when creating this user name", error})
-    })
+router.post("/", async (request, response)=>{
+    if(request.body.organizationName) {
+        //create new user AND new org and associate them
+        Organization.create({
+            name:request.body.organizationName
+        }).then(async orgdata=>{
+            await User.create({
+                name:request.body.name,
+                displayName:request.body.displayName,
+                password:request.body.password,
+                isAuth:true,
+                isAdmin:true,
+                organizationId:orgdata.id
+        
+            })
+            .then(userData=>{
+                //jwt sign them in now that they are signed up
+                const token = jwt.sign({
+                    id:userData.id,
+                    name:userData.name
+                },process.env.JWT_SECRET,{
+                    expiresIn:"24h"
+                })
+                return response.status(201).json({
+                    token:token,
+                    user:userData
+                });
+            })
+            .catch(error=>{
+                console.log("error:", error);
+                response.status(500)
+                .json({msg: "Error when creating this user", error})
+            });
+        }).catch(err => {
+            console.log("error:", err);
+                response.status(500)
+                .json({msg: "Error when creating this org", err})
+        });
+    } else if(request.body.inviteCode) {
+        //search orgs for invite code and set auths accordingly
+        let orgId = -1;
+        let isAuth = false;
+        let isAdmin = false;
+        //search normal invite codes first
+        await Organization.findOne({
+            where:{
+                normalCode:request.body.inviteCode
+            }
+        }).then(org=>{
+            if(org) {
+                orgId = org.id;
+            }
+        }).catch(err=>{
+            response.status(500).json({msg:'Error searching for invite org.',err});
+        });
+        //if none found, search auth invite codes
+        if(orgId < 0) {
+            await Organization.findOne({
+                where:{
+                    authCode:request.body.inviteCode
+                }
+            }).then(org=>{
+                if(org) {
+                    isAuth = true;
+                    orgId = org.id;
+                }
+            }).catch(err=>{
+                response.status(500).json({msg:'Error searching for invite org.',err});
+            });
+        }
+        //if still none found, search admin invite codes
+        if(orgId < 0) {
+            await Organization.findOne({
+                where:{
+                    adminCode:request.body.inviteCode
+                }
+            }).then(org=>{
+                if(org) {
+                    isAuth = true;
+                    isAdmin = true;
+                    orgId = org.id;
+                }
+            }).catch(err=>{
+                response.status(500).json({msg:'Error searching for invite org.',err});
+            });
+        }
+        console.log(orgId);
+        //if nothing found, bail
+        if(orgId < 0) {
+            response.status(400).json({msg:'Bad invite code'});
+        } else {
+            //create user if all is correct
+            User.create({
+                name:request.body.name,
+                displayName:request.body.displayName,
+                password:request.body.password,
+                isAuth:isAuth,
+                isAdmin:isAdmin,
+                organizationId:orgId
+            })
+            .then(userData=>{
+                //jwt sign them in now that they are signed up
+                const token = jwt.sign({
+                    id:userData.id,
+                    name:userData.name
+                },process.env.JWT_SECRET,{
+                    expiresIn:"24h"
+                })
+                return response.status(201).json({
+                    token:token,
+                    user:userData
+                });
+            })
+            .catch(error=>{
+                console.log("error:", error);
+                response.status(500)
+                .json({msg: "Error when creating this user", error})
+            });
+        }
+    } else {
+        response.status(400).json({msg:'Bad request - no invite code or new org name.'});
+    }
 })
 
 // dashboard route
@@ -94,9 +198,12 @@ router.post("/login", (request, response)=>{
         if(!foundUser){
             console.log("Test at line 65 at login route in UserController")
             // if the User obhect was not found return an unauthrized status of 401
-            return response.status(401).json({msg:"User was not found"})
+            return response.status(401).json({msg:"User was not found"});
         } else if (!bcrypt.compareSync(request.body.password, foundUser.password)) { 
             // Unencrypt the data, then check if the password matches the stored password
+            console.log(foundUser.password);
+            console.log(request.body.password);
+            return response.status(401).json({msg:"Incorrect password"});
         } else {
             // new json webtoken method sign
             // sign method uses three arguments
@@ -107,7 +214,7 @@ router.post("/login", (request, response)=>{
                 id:foundUser.id,
                 username:foundUser.username
             },process.env.JWT_SECRET,{
-                expiresIn:"2h"
+                expiresIn:"24h"
             })
             console.log("\x1B[33m======================================================================================================================================================================")
             console.log("\x1B[36m value of json web token:", token);

@@ -1,10 +1,14 @@
 const router = require('express').Router();
 const {User, Organization, Incident } = require('../models');
 const bcrypt = require("bcrypt");
+const { IsUser, IsAuth, IsAdmin } = require("./ValidateUser");
 
 // get all incidents
 // include user
-router.get('/', (request, response) => {
+router.get('/', async (request, response) => {
+    if(!(await IsUser(request.headers?.authorization?.split(" ")[1]))) {
+        return response.status(403).json({msg:"Invalid access."});
+    }
   Incident.findAll({
     include:[ User ]
   }).then(incidentdata=>{
@@ -19,7 +23,10 @@ router.get('/', (request, response) => {
 });
 
 // get one incident by id value
-router.get('/:id', (request, response) => {
+router.get('/:id', async (request, response) => {
+    if(!(await IsUser(request.headers?.authorization?.split(" ")[1]))) {
+        return response.status(403).json({msg:"Invalid access."});
+    }
   Incident.findByPk(request.params.id, {
     include:[User]
   }).then(incidentdata=>{
@@ -41,6 +48,9 @@ router.get('/:id', (request, response) => {
 
 // create a new incident
 router.post('/', async (request, response) => {
+    if(!(await IsAuth(request.headers?.authorization?.split(" ")[1]))) {
+        return response.status(403).json({msg:"Invalid access."});
+    }
 Incident.create(request.body).then(incidentdata=>{
     response.status(201).json(incidentdata)
 }).catch(error=>{
@@ -53,7 +63,10 @@ Incident.create(request.body).then(incidentdata=>{
 });
 
 // update a incident 
-router.put('/:id', (request, response) => {
+router.put('/:id', async (request, response) => {
+    if(!(await IsAuth(request.headers?.authorization?.split(" ")[1]))) {
+        return response.status(403).json({msg:"Invalid access."});
+    }
   // update a incident's name by its `id` value
     Incident.update({
         description:request.body.description,
@@ -81,7 +94,10 @@ router.put('/:id', (request, response) => {
 });
 
 // delete incident by its id value
-router.delete('/:id', (request, response) => {
+router.delete('/:id', async (request, response) => {
+    if(!(await IsAuth(request.headers?.authorization?.split(" ")[1]))) {
+        return response.status(403).json({msg:"Invalid access."});
+    }
     Incident.destroy({
     where:{
         id:request.params.id

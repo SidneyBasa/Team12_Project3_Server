@@ -4,9 +4,7 @@ const Incident = require('./Incident');
 
 
 User.belongsTo(Organization, {
-    foreignKey: {
-        allowNull: 'false',
-    },
+    foreignKey: 'organizationId',
     onDelete: 'CASCADE',
 }
 )
@@ -15,9 +13,7 @@ Organization.hasMany(User);
 
 Incident.belongsTo(User, 
     {
-    foreignKey: {
-        allowNull: 'false',
-    },
+    foreignKey: 'userId',
     onDelete: 'CASCADE',
 }
 )

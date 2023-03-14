@@ -1,6 +1,6 @@
-const { Model, DataTypes } = require('sequelize');
+const { Model, DataTypes, UUIDV4 } = require('sequelize');
 const sequelize = require('../config/connection.js');
-const { uuid: uuidv4 } = require('uuid');
+const { v4: uuid } = require('uuid');
 
 class Organization extends Model {}
 
@@ -13,17 +13,20 @@ Organization.init({
     adminCode: {
         type: DataTypes.STRING,
         unique:true,
-        allowNull:false
+        allowNull:false,
+        defaultValue:""
     },
     authCode: {
         type: DataTypes.STRING,
         unique:true,
-        allowNull:false
+        allowNull:false,
+        defaultValue:""
     },
     normalCode: {
         type: DataTypes.STRING,
         unique:true,
-        allowNull:false
+        allowNull:false,
+        defaultValue:""
     }
 }, {
     sequelize,
